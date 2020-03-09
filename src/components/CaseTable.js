@@ -51,7 +51,6 @@ const CaseTable = (props) => {
                             <TableCell align="center">
                                 <IconButton
                                     edge="start"
-                                    className={classes.menuButton}
                                     color="inherit"
                                     aria-label="detail case"
                                 >
@@ -59,7 +58,6 @@ const CaseTable = (props) => {
                                 </IconButton>
                                 <IconButton
                                     edge="start"
-                                    className={classes.menuButton}
                                     color="inherit"
                                     aria-label="edit case"
                                 >
@@ -67,7 +65,6 @@ const CaseTable = (props) => {
                                 </IconButton>
                                 <IconButton
                                     edge="start"
-                                    className={classes.menuButton}
                                     color="inherit"
                                     aria-label="delete case"
                                 >
