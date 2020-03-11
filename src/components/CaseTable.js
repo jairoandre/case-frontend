@@ -31,10 +31,10 @@ const CaseTable = props => {
         <TableHead>
           <TableRow>
             <TableCell>Id</TableCell>
-            <TableCell align="right">Folder</TableCell>
-            <TableCell align="right">Title</TableCell>
-            <TableCell align="right">Responsible</TableCell>
-            <TableCell align="right">Created</TableCell>
+            <TableCell align="left">Folder</TableCell>
+            <TableCell align="left">Title</TableCell>
+            <TableCell align="left">Responsible</TableCell>
+            <TableCell align="left">Created</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -45,10 +45,10 @@ const CaseTable = props => {
                 <TableCell component="th" scope="row">
                   {row.id}
                 </TableCell>
-                <TableCell align="right">{row.folder}</TableCell>
-                <TableCell align="right">{row.title}</TableCell>
-                <TableCell align="right">{row.responsible}</TableCell>
-                <TableCell align="right">{row.created}</TableCell>
+                <TableCell align="left">{row.folder}</TableCell>
+                <TableCell align="left">{row.title}</TableCell>
+                <TableCell align="left">{row.responsible}</TableCell>
+                <TableCell align="left">{row.created.toLocaleDateString("pt-BR")}</TableCell>
                 <TableCell align="center">
                   <IconButton
                     edge="start"

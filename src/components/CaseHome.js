@@ -17,6 +17,7 @@ import {
   Typography,
   InputBase
 } from "@material-ui/core";
+import { withSnackbar } from 'notistack';
 import CaseTable from "./CaseTable";
 import CaseForm from "./CaseForm";
 import api from "../service/api";
@@ -83,7 +84,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const CaseHome = () => {
+const CaseHome = props => {
   const createCase = () => {
     return {
       id: null,
@@ -93,15 +94,19 @@ const CaseHome = () => {
       tags: [],
       description: "",
       access: "PUBLIC",
+      responsible: "",
       created: new Date()
     };
   };
 
-  const casesData = [];
+  const classes = useStyles();
+  useEffect(() => {
+    api.filterCases(setCases, {}, setLoadingEl);
+  }, []);
 
   const [caseObj, setCaseObj] = useState(createCase());
-  const [formMode, setFormMode] = useState(null)
-  const [cases, setCases] = useState(casesData);
+  const [formMode, setFormMode] = useState(null);
+  const [cases, setCases] = useState([]);
   const [loadingEl, setLoadingEl] = useState(null);
   const [filter, setFilter] = useState({
     limit: 100,
@@ -114,27 +119,49 @@ const CaseHome = () => {
     createdFilter: ""
   });
 
-  const updateSearchTerm = event => {
-    setFilter({ searchTerm: event.target.value, ...filter });
+  const handleSearchTermChange = event => {
+    setFilter({ ...filter, searchTerm: event.target.value });
+  };
+
+  const handleSearchByChange = event => {
+    setFilter({ ...filter, searchBy: event.target.value });
   };
 
   const isLoading = Boolean(loadingEl);
 
   const isFormMode = Boolean(formMode);
 
-  useEffect(() => {
-    //api.filterCases(setCases, filter, setLoadingEl);
-  }, []);
-
-  const handleSearchByChange = event => {
-    setFilter({ ...filter, searchBy: event.target.value });
+  const doSearch = () => {
+    api.filterCases(setCases, filter, setLoadingEl, addMessage);
   };
-
-  const classes = useStyles();
 
   const handleNewCase = event => {
     setFormMode(true);
-  }
+  };
+
+  const saveForm = () => {
+    api.save(caseObj, updateCaseList, setLoadingEl, addMessage);
+  };
+
+  const cancelForm = () => {
+    setCaseObj(createCase());
+    setFormMode(false);
+  };
+
+  const updateCaseList = (attObj, isNewObj) => {
+    if (isNewObj) {
+      cases.push(attObj);
+      setCases(cases);
+    } else {
+      doSearch();
+      //cases.filter(item => item.id === attObj.id).forEach(item => )
+    }
+    setFormMode(false);
+  };
+
+  const addMessage = (msg, options) => {
+    props.enqueueSnackbar(msg, options);
+  };
 
   return (
     <Container>
@@ -157,7 +184,7 @@ const CaseHome = () => {
                   root: classes.inputRoot,
                   input: classes.inputInput
                 }}
-                onChange={updateSearchTerm}
+                onChange={handleSearchTermChange}
                 inputProps={{ "aria-label": "search" }}
               />
             </div>
@@ -192,8 +219,10 @@ const CaseHome = () => {
               variant="contained"
               aria-label="button group"
             >
-              <Button>SEARCH</Button>
-              <Button onClick={handleNewCase} disabled={isFormMode}>NEW CASE</Button>
+              <Button onClick={doSearch} disabled={isFormMode}>SEARCH</Button>
+              <Button onClick={handleNewCase} disabled={isFormMode}>
+                NEW CASE
+              </Button>
             </ButtonGroup>
             <div className={classes.grow} />
             <IconButton
@@ -209,10 +238,19 @@ const CaseHome = () => {
         </AppBar>
       </div>
       <Box className={classes.growTable}>
-        {isFormMode ? <CaseForm caseObj={caseObj} setCaseObj={setCaseObj} /> : <CaseTable cases={cases} loading={isLoading} /> }
+        {isFormMode ? (
+          <CaseForm
+            caseObj={caseObj}
+            setCaseObj={setCaseObj}
+            saveForm={saveForm}
+            cancelForm={cancelForm}
+          />
+        ) : (
+          <CaseTable cases={cases} loading={isLoading} />
+        )}
       </Box>
     </Container>
   );
 };
 
-export default CaseHome;
+export default withSnackbar(CaseHome);

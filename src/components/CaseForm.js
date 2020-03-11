@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Card,
   CardContent,
@@ -6,17 +6,17 @@ import {
   TextField,
   Typography,
   Button,
-  IconButton,
-  Chip,
   FormControl,
-  InputAdornment,
   InputLabel,
   Select,
-  Paper,
   MenuItem
 } from "@material-ui/core";
+
+import Divider from '@material-ui/core/Divider';
 import { makeStyles } from "@material-ui/core/styles";
+import CaseInput from "./CaseInput";
 import CaseListInput from "./CaseListInput";
+import CaseDate from './CaseDate';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,16 +30,16 @@ const useStyles = makeStyles(theme => ({
 const CaseForm = props => {
   const classes = useStyles();
 
+  const save = () => {
+    props.saveForm();
+  }
+
+  const cancel = () => {
+    props.cancelForm();
+  }
+
   const changeCaseObj = newProps => {
     props.setCaseObj({ ...props.caseObj, ...newProps });
-  };
-
-  const onChangeFolder = event => {
-    changeCaseObj({ folder: event.target.value });
-  };
-
-  const onChangeTitle = event => {
-    changeCaseObj({ title: event.target.value });
   };
 
   const onChangeAccess = event => {
@@ -65,25 +65,34 @@ const CaseForm = props => {
               New Case
             </Typography>
           )}
-          <FormControl fullWidth>
-            <TextField
-              id="folder"
-              label="Folder"
-              size="medium"
-              value={props.caseObj.folder}
-              variant="outlined"
-              onChange={onChangeFolder}
-            />
-          </FormControl>
-          <FormControl size="medium">
-            <TextField
-              id="title"
-              label="Title"
-              value={props.caseObj.title}
-              onChange={onChangeTitle}
-              variant="outlined"
-            />
-          </FormControl>
+          <CaseInput
+            id="title"
+            fullWidth
+            label="Title"
+            caseObj={props.caseObj}
+            property="title"
+            setCaseObj={changeCaseObj}
+          />
+          <CaseInput
+            id="folder"
+            label="Folder"
+            caseObj={props.caseObj}
+            property="folder"
+            setCaseObj={changeCaseObj}
+          />
+          <CaseInput
+            id="responsible"
+            label="Responsible"
+            caseObj={props.caseObj}
+            property="responsible"
+            setCaseObj={changeCaseObj}
+          />
+          <CaseDate 
+            id="create"
+            property="created"
+            label="Created"
+            caseObj={props.caseObj}
+            changeCaseObj={changeCaseObj}/>
           <FormControl>
             <InputLabel>Access</InputLabel>
             <Select
@@ -95,14 +104,34 @@ const CaseForm = props => {
               <MenuItem value={"PRIVATE"}>PRIVATE</MenuItem>
             </Select>
           </FormControl>
+          <CaseInput
+            id="description"
+            fullWidth
+            label="Description"
+            caseObj={props.caseObj}
+            property="description"
+            setCaseObj={changeCaseObj}
+          />
           <div></div>
-          <CaseListInput items={props.caseObj.clients} property="clients" label="Clients" changeCaseObj={changeCaseObj} />
-          <CaseListInput items={props.caseObj.tags} property="tags" label="Tags" changeCaseObj={changeCaseObj} />
+          <CaseListInput
+            items={props.caseObj.clients}
+            property="clients"
+            label="Clients"
+            changeCaseObj={changeCaseObj}
+          />
+          <Divider variant="middle"/>
+          <CaseListInput
+            items={props.caseObj.tags}
+            property="tags"
+            label="Tags"
+            changeCaseObj={changeCaseObj}
+          />
+          <FormControl></FormControl>
         </form>
       </CardContent>
       <CardActions>
-        <Button size="small">Save</Button>
-        <Button size="small">Cancel</Button>
+        <Button size="small" onClick={save} variant="contained" color="primary">Save</Button>
+        <Button size="small" onClick={cancel} variant="contained" color="secondary">Cancel</Button>
       </CardActions>
     </Card>
   );

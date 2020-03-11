@@ -9,7 +9,7 @@ import {
   IconButton,
   Chip,
   FormControl,
-  InputAdornment,
+  InputAdornment
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -73,7 +73,7 @@ const CaseListInput = props => {
       setItemValue("");
       let newObj = {};
       newObj[props.property] = items;
-      props.changeCaseObj(newObj)
+      props.changeCaseObj(newObj);
     }
   };
   const handleItemDelete = idx => () => {
@@ -89,7 +89,10 @@ const CaseListInput = props => {
             label={props.label}
             value={itemValue}
             onChange={onChangeItemValue}
-            variant="outlined"
+            variant="filled"
+            InputLabelProps={{
+              shrink: true
+            }}
             InputProps={{
               endAdornment: addAdornment(handleItemAdd)
             }}
