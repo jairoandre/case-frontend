@@ -35,7 +35,7 @@ const api = {
       })
       .catch(error => {
         loadingCb(false);
-        printError(error, addMessage);
+        printError(error.message, addMessage);
       });
   },
 

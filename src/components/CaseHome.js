@@ -111,14 +111,19 @@ const CaseHome = props => {
       accessFilter: "",
       createdFilter: ""
     }
-  }
+  };
   
-  const fileInput = React.createRef();
+  const addMessage = (msg, options) => {
+    props.enqueueSnackbar(msg, options);
+  };
 
+  const [addMessageCb] = useState(addMessage);
+  
   const classes = useStyles();
+
   useEffect(() => {
-    api.filterCases(setCases, {}, setLoadingEl);
-  }, []);
+    api.filterCases(setCases, {}, setLoadingEl, addMessageCb);
+  }, [addMessageCb]);
 
   const [caseObj, setCaseObj] = useState(createCase());
   const [formMode, setFormMode] = useState(null);
@@ -180,10 +185,6 @@ const CaseHome = props => {
       doSearch();
     }
     setFormMode(false);
-  };
-
-  const addMessage = (msg, options) => {
-    props.enqueueSnackbar(msg, options);
   };
 
   return (

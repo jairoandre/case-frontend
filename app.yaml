@@ -1,6 +1,4 @@
 runtime: nodejs10
-service: frontend
-version: v1
 handlers:
   - url: /static/js/(.*)
     static_files: build/static/js/\1
