@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
-import { Search, Help } from "@material-ui/icons";
+import { Search, Backup } from "@material-ui/icons";
 import {
   AppBar,
   Backdrop,
@@ -20,6 +20,7 @@ import {
 import { withSnackbar } from 'notistack';
 import CaseTable from "./CaseTable";
 import CaseForm from "./CaseForm";
+import CaseImport from './CaseImport';
 import api from "../service/api";
 
 const useStyles = makeStyles(theme => ({
@@ -99,6 +100,21 @@ const CaseHome = props => {
     };
   };
 
+  const createFilter = () => {
+    return {
+      limit: 100,
+      offset: 0,
+      searchBy: "folder",
+      searchTerm: "",
+      clientsFilter: "",
+      tagsFilter: "",
+      accessFilter: "",
+      createdFilter: ""
+    }
+  }
+  
+  const fileInput = React.createRef();
+
   const classes = useStyles();
   useEffect(() => {
     api.filterCases(setCases, {}, setLoadingEl);
@@ -108,16 +124,8 @@ const CaseHome = props => {
   const [formMode, setFormMode] = useState(null);
   const [cases, setCases] = useState([]);
   const [loadingEl, setLoadingEl] = useState(null);
-  const [filter, setFilter] = useState({
-    limit: 100,
-    offset: 0,
-    searchBy: "folder",
-    searchTerm: "",
-    clientsFilter: "",
-    tagsFilter: "",
-    accessFilter: "",
-    createdFilter: ""
-  });
+  const [filter, setFilter] = useState(createFilter());
+  const [importOpen, setImportOpen] = useState(false);
 
   const handleSearchTermChange = event => {
     setFilter({ ...filter, searchTerm: event.target.value });
@@ -143,10 +151,26 @@ const CaseHome = props => {
     api.save(caseObj, updateCaseList, setLoadingEl, addMessage);
   };
 
+  const deleteCase = (id) => {
+    api.delete(id, setLoadingEl, doSearch, addMessage);
+  }
+
   const cancelForm = () => {
     setCaseObj(createCase());
     setFormMode(false);
   };
+
+  const editCaseObj = (caseObj) => {
+    setCaseObj(caseObj);
+    setFormMode(true);
+  }
+
+  const importFile = (file) => {
+    if (file)
+      api.batch(file, setLoadingEl, doSearch, addMessage);
+    else
+      addMessage("No file informed!", { variant: "warning" });
+  }
 
   const updateCaseList = (attObj, isNewObj) => {
     if (isNewObj) {
@@ -154,7 +178,6 @@ const CaseHome = props => {
       setCases(cases);
     } else {
       doSearch();
-      //cases.filter(item => item.id === attObj.id).forEach(item => )
     }
     setFormMode(false);
   };
@@ -231,8 +254,9 @@ const CaseHome = props => {
               aria-controls="help"
               aria-haspopup="true"
               color="inherit"
+              onClick={() => { setImportOpen(true) }}
             >
-              <Help />
+              <Backup />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -246,9 +270,10 @@ const CaseHome = props => {
             cancelForm={cancelForm}
           />
         ) : (
-          <CaseTable cases={cases} loading={isLoading} />
+          <CaseTable cases={cases} loading={isLoading} editCaseObj={editCaseObj} deleteCase={deleteCase}/>
         )}
       </Box>
+      <CaseImport open={importOpen} importAction={importFile} closeAction={() => { setImportOpen(false) }}/>
     </Container>
   );
 };

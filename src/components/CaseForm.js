@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardActions,
-  TextField,
   Typography,
   Button,
   FormControl,
@@ -51,15 +50,9 @@ const CaseForm = props => {
       <CardContent>
         <form className={classes.root} noValidate autoComplete="off">
           {props.caseObj.id ? (
-            <TextField
-              id="id"
-              label="Id"
-              value={props.caseObj.id}
-              variant="outlined"
-              InputProps={{
-                readOnly: true
-              }}
-            />
+            <Typography className={classes.title} variant="h4" noWrap>
+              Edit Case - {props.caseObj.id}
+            </Typography>
           ) : (
             <Typography className={classes.title} variant="h4" noWrap>
               New Case

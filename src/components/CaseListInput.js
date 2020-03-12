@@ -76,8 +76,13 @@ const CaseListInput = props => {
       props.changeCaseObj(newObj);
     }
   };
+  // A function that returns a function to be called on the onDelete event
   const handleItemDelete = idx => () => {
-    console.log(idx);
+    const items = props.items;
+    items.splice(idx, 1);
+    let newObj = {};
+    newObj[props.property] = items;
+    props.changeCaseObj(newObj);
   };
   return (
     <Card elevation={3}>
